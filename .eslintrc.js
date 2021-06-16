@@ -13,5 +13,9 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react', '@typescript-eslint'],
-  rules: {},
+  rules: {
+    'import/no-unresolved': 'off',
+    'import/extensions': 'off',
+    'no-underscore-dangle': ['error', {'allowAfterThis': true}],
+  },
 };
