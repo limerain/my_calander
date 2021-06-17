@@ -16,6 +16,9 @@ module.exports = {
   rules: {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
-    'no-underscore-dangle': ['error', {'allowAfterThis': true}],
+    'no-underscore-dangle': ['error', { allowAfterThis: true }],
+    'react/jsx-filename-extension': [1, { extensions: ['.ts', '.tsx', '.js', '.jsx'] }],
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error'],
   },
 };
