@@ -5,10 +5,10 @@ const dayOfWeek: Array<string> = ['일', '월', '화', '수', '목', '금', '토
 
 const DayofWeekPresenter = (): ReactElement => {
   return (
-    <Row style={{ display: 'flex', width: '600px' }}>
+    <Row style={{ marginLeft: '50px', width: '30%' }}>
       {dayOfWeek.map(function (v: string) {
         return (
-          <Col span={3} style={{ marginRight: '10px' }}>
+          <Col span={3} style={{ marginRight: '7px' }}>
             {' '}
             {v}
           </Col>

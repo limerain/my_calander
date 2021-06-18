@@ -4,3 +4,8 @@ export enum CalendarMode {
   Calendar,
   TimeTable,
 }
+
+export enum CalendarUnit {
+  MONTHLY = '월',
+  DAILY = '일',
+}

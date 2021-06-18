@@ -14,7 +14,7 @@ const CurrentDateContainer = (): ReactElement => {
     };
   }, []);
 
-  return <p>{calendarState.currentDate?.format('YYYY년 MM월')}</p>;
+  return <>{calendarState.currentDate?.format('YYYY년 MM월')}</>;
 };
 
 export default CurrentDateContainer;

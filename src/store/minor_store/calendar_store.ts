@@ -1,10 +1,11 @@
 import StoreTemplate from '@store/store_util';
 import { Moment } from 'moment';
-import { CalendarMode } from '@constant';
+import { CalendarMode, CalendarUnit } from '@constant';
 
 export type CalendarState = {
   currentDate: Moment | null;
   currentMode: CalendarMode;
+  currentUnit: CalendarUnit;
   error: string;
 };
 
@@ -13,6 +14,7 @@ class CalendarStore extends StoreTemplate {
     super({
       currentDate: null,
       currentMode: CalendarMode.Calendar,
+      currentUnit: CalendarUnit.MONTHLY,
       error: '',
     });
   }
