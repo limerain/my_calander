@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import ArrowContainer, { Direction } from './header_component/arrow_container';
 import CurrentDateContainer from './header_component/current_date_container';
+import CalendarSelectorContainer, { CalendarUnit } from './header_component/calendar_selector_container';
 
 const HeaderContainer = (): ReactElement => {
   return (
@@ -8,6 +9,8 @@ const HeaderContainer = (): ReactElement => {
       <ArrowContainer direction={Direction.LEFT} />
       <CurrentDateContainer />
       <ArrowContainer direction={Direction.RIGHT} />
+      <CalendarSelectorContainer unit={CalendarUnit.MONTHLY} />
+      <CalendarSelectorContainer unit={CalendarUnit.DAILY} />
     </div>
   );
 };

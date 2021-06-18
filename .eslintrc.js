@@ -20,6 +20,8 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'no-plusplus': 'off',
+    'class-methods-use-this': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'no-underscore-dangle': ['error', { allowAfterThis: true }],

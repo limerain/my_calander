@@ -1,14 +1,14 @@
 import React, { ReactElement } from 'react';
 import HeaderContainer from '@view/header';
-import SchedulerContainer from '@view/contents';
+import CalendarContainer from '@view/contents';
 
-import './App.css';
+import './App.less';
 
 const App = (): ReactElement => {
   return (
     <header className="App-header">
       <HeaderContainer />
-      <SchedulerContainer />
+      <CalendarContainer />
     </header>
   );
 };

@@ -1,4 +1,4 @@
-import monthStore, { MonthState } from '@store/minor_store/month_store';
+import calendarStore, { CalendarState } from '@store/minor_store/calendar_store';
 
-export type { MonthState };
-export { monthStore };
+export type { CalendarState };
+export { calendarStore };
