@@ -11,22 +11,30 @@ const MonthlyCalendarContainer = (): ReactElement => {
 
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
-    const clearFunction = () => {
+
+    return () => {
       calendarStoreSubs.unsubscribe();
     };
+  }, []);
 
-    if (!calendarState.currentDate) return clearFunction;
+  if (!calendarState.currentDate) return <></>;
 
-    const startofMonth = calendarState.currentDate?.startOf('month');
-    const startDayofMonth = startofMonth?.get('d');
-    const startDayofWeek = startofMonth?.clone().add('d', -startDayofMonth!);
-    console.log('startofMonth: ', startofMonth);
-    // console.log(moment().calendar(startofMonth));
+  const startofMonth = calendarState.currentDate.startOf('month');
+  const startDayofMonth = startofMonth.get('d');
+  const startDayofFirstWeek = startofMonth.clone().add(-startDayofMonth, 'd');
+  // console.log('startofMonth: ', startofMonth);
+  // console.log('startDayofFirstWeek: ', startDayofFirstWeek);
 
-    return clearFunction;
-  }, [calendarState.currentDate]);
   for (let i = 0; i < WEEKINMONTH; i++) {
-    weekInMonthContainer.push(<WeeklyContainer />);
+    const sundayofThisContainer = startDayofFirstWeek.clone().add(i * 7, 'd');
+    // console.log('parameter: ', sundayofThisContainer);
+    weekInMonthContainer.push(
+      <WeeklyContainer
+        key={`my-month-calendar-${i}`}
+        sundayofThisContainer={sundayofThisContainer}
+        thisMonth={startofMonth.format('M')}
+      />,
+    );
   }
 
   return (

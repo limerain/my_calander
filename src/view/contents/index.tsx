@@ -1,16 +1,18 @@
 import React, { ReactElement, useState, useLayoutEffect } from 'react';
-import { CalendarMode } from '@constant';
-import { calendarStore } from '@store/global_store';
+import { CalendarUnit } from '@constant';
+import { calendarStore, CalendarState } from '@store/global_store';
 
 import YearContainer from './calendars/year_container';
+import MonthContainer from './calendars/month_container';
 import TimeTableContainer from './calendars/time_table';
 
 const calendarContainers = new Map();
-calendarContainers.set(CalendarMode.Calendar, YearContainer);
-calendarContainers.set(CalendarMode.TimeTable, TimeTableContainer);
+calendarContainers.set(CalendarUnit.YEARLY, <YearContainer />);
+calendarContainers.set(CalendarUnit.MONTHLY, <MonthContainer />);
+calendarContainers.set(CalendarUnit.DAILY, <TimeTableContainer />);
 
 const CalendarContainer = (): ReactElement => {
-  const [calendarState, setCalendarState] = useState(calendarStore.initialState);
+  const [calendarState, setCalendarState] = useState<CalendarState>(calendarStore.initialState);
 
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
@@ -20,7 +22,8 @@ const CalendarContainer = (): ReactElement => {
     };
   }, []);
 
-  return <>{calendarContainers.get(calendarState.currentMode)()}</>;
+  // console.log('Calendar Container: ', calendarState.currentUnit);
+  return <div style={{ width: '55rem', height: '45rem' }}>{calendarContainers.get(calendarState.currentUnit)}</div>;
 };
 
 export default CalendarContainer;

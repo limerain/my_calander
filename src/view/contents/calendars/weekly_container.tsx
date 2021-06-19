@@ -1,37 +1,27 @@
-import React, { ReactElement, useState, useLayoutEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { Row } from 'antd';
-import { calendarStore } from '@store/global_store';
+import { Moment } from 'moment';
 import DayContainer from './day_container';
 
 const WEEKDAY = 7;
 
-const WeeklyContainer = (): ReactElement => {
-  // const _days = [];
+type Props = {
+  sundayofThisContainer: Moment;
+  thisMonth: string;
+};
 
-  // for (let i = 0; i < 7; i++) {
-  //   const Day = moment(firstDayFormat).add('d', i);
-  //   _days.push({
-  //     yearMonthDayFormat: Day.format('YYYY-MM-DD'),
-  //     getDay: Day.format('D'),
-  //     isHolyDay: false,
-  //   });
-  // }
-  const [calendarState, setCalendarState] = useState(calendarStore.initialState);
-
-  useLayoutEffect(() => {
-    const calendarStoreSubs = calendarStore.init(setCalendarState);
-
-    return () => {
-      calendarStoreSubs.unsubscribe();
-    };
-  }, []);
-
+const WeeklyContainer = ({ sundayofThisContainer, thisMonth }: Props): ReactElement => {
   const dayContainers: ReactElement[] = [];
+
   for (let i = 0; i < WEEKDAY; i++) {
-    dayContainers.push(<DayContainer />);
+    const nowDay = sundayofThisContainer.clone().add(i, 'd');
+    const dateofDayContainer = nowDay.format('D');
+    let color = i === 0 ? 'red' : 'black';
+    color = nowDay.format('M') === thisMonth ? color : 'gainsboro';
+    dayContainers.push(<DayContainer key={`my-week-calendar-${i}`} today={dateofDayContainer} color={color} />);
   }
 
-  return <Row>{dayContainers}</Row>;
+  return <Row style={{ height: '14.2857143%' }}>{dayContainers}</Row>;
 };
 
 export default WeeklyContainer;

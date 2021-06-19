@@ -1,29 +1,37 @@
-import React, { ReactElement, useState, useLayoutEffect } from 'react';
+import React, { ReactElement, useState, useLayoutEffect, useRef } from 'react';
 import { Button } from 'antd';
 import { calendarStore, CalendarState } from '@store/global_store';
 import { CalendarUnit } from '@constant';
+import CalendarVM from '@vm/calendar_vm';
+import { fromEvent } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 type Props = {
   unit: CalendarUnit;
 };
 
 const CalendarSelectorContainer = ({ unit }: Props): ReactElement => {
-  // const currentState = CalendarUnit.MONTHLY;
-  // primary ghost dashed link text default
   const [calendarState, setCalendarState] = useState<CalendarState>(calendarStore.initialState);
+  const selectorButton = useRef(null);
 
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
-    const clearFunction = () => {
+    const onSelectorClicked = fromEvent(selectorButton.current as any, 'click')
+      .pipe(map((event: any) => event.srcElement.innerText))
+      .subscribe((selectedUnit: CalendarUnit) => CalendarVM.setCurrentUnit(selectedUnit));
+
+    return () => {
       calendarStoreSubs.unsubscribe();
+      onSelectorClicked.unsubscribe();
     };
-
-    return clearFunction;
-  }, [calendarState.currentUnit]);
+  }, []);
   const type: any = unit === calendarState.currentUnit ? 'primary' : 'default';
-  console.log('type: ', type, ' unit: ', unit);
 
-  return <Button type={type}>{unit}</Button>;
+  return (
+    <Button type={type} ref={selectorButton}>
+      {unit}
+    </Button>
+  );
 };
 
 export default CalendarSelectorContainer;
