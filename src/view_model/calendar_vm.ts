@@ -2,13 +2,19 @@ import { CalendarUnit } from '@constant';
 import moment, { Moment } from 'moment';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { calendarStore } from '../store/global_store';
+import { calendarStore, CalendarState } from '../store/global_store';
 // import { from, Observable } from 'rxjs';
 // import { tap } from 'rxjs/operators';
 
 class CalendarViewModel {
   public initDate(): void {
-    calendarStore.setCurrentDate(moment());
+    // calendarStore.setCurrentDate(moment());
+    const data = calendarStore.getData() as CalendarState;
+    calendarStore.setMonthState({
+      ...data,
+      currentDate: moment(),
+      selectedDate: moment(),
+    });
   }
 
   public movePrevMonth(): Observable<void> {
@@ -25,6 +31,10 @@ class CalendarViewModel {
 
   public setCurrentUnit(unit: CalendarUnit): void {
     calendarStore.setCalendarUnit(unit);
+  }
+
+  public setSelectedDate(date: Moment): void {
+    calendarStore.setSelectedDate(date);
   }
 }
 

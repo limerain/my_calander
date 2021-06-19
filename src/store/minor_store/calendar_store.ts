@@ -5,6 +5,7 @@ import { CalendarUnit } from '@constant';
 export type CalendarState = {
   currentDate: Moment | null;
   currentUnit: CalendarUnit;
+  selectedDate: Moment | null;
   error: string;
 };
 
@@ -13,6 +14,7 @@ class CalendarStore extends StoreTemplate {
     super({
       currentDate: null,
       currentUnit: CalendarUnit.MONTHLY,
+      selectedDate: null,
       error: '',
     });
   }
@@ -32,6 +34,13 @@ class CalendarStore extends StoreTemplate {
     this.nextState({
       ...this.state_,
       currentUnit: unit,
+    });
+  }
+
+  public setSelectedDate(date: Moment) {
+    this.nextState({
+      ...this.state_,
+      selectedDate: date,
     });
   }
 

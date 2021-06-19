@@ -22,7 +22,6 @@ const CalendarContainer = (): ReactElement => {
     };
   }, []);
 
-  // console.log('Calendar Container: ', calendarState.currentUnit);
   return <div style={{ width: '55rem', height: '45rem' }}>{calendarContainers.get(calendarState.currentUnit)}</div>;
 };
 

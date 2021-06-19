@@ -15,10 +15,9 @@ const WeeklyContainer = ({ sundayofThisContainer, thisMonth }: Props): ReactElem
 
   for (let i = 0; i < WEEKDAY; i++) {
     const nowDay = sundayofThisContainer.clone().add(i, 'd');
-    const dateofDayContainer = nowDay.format('D');
     let color = i === 0 ? 'red' : 'black';
     color = nowDay.format('M') === thisMonth ? color : 'gainsboro';
-    dayContainers.push(<DayContainer key={`my-week-calendar-${i}`} today={dateofDayContainer} color={color} />);
+    dayContainers.push(<DayContainer key={`my-week-calendar-${i}`} presentDay={nowDay} color={color} />);
   }
 
   return <Row style={{ height: '14.2857143%' }}>{dayContainers}</Row>;

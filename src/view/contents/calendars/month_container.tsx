@@ -22,12 +22,9 @@ const MonthlyCalendarContainer = (): ReactElement => {
   const startofMonth = calendarState.currentDate.startOf('month');
   const startDayofMonth = startofMonth.get('d');
   const startDayofFirstWeek = startofMonth.clone().add(-startDayofMonth, 'd');
-  // console.log('startofMonth: ', startofMonth);
-  // console.log('startDayofFirstWeek: ', startDayofFirstWeek);
 
   for (let i = 0; i < WEEKINMONTH; i++) {
     const sundayofThisContainer = startDayofFirstWeek.clone().add(i * 7, 'd');
-    // console.log('parameter: ', sundayofThisContainer);
     weekInMonthContainer.push(
       <WeeklyContainer
         key={`my-month-calendar-${i}`}
