@@ -1,10 +1,11 @@
 import React, { ReactElement, useState, useLayoutEffect, useRef } from 'react';
 import { Button } from 'antd';
+import { fromEvent, iif } from 'rxjs';
+import { map, tap, filter, mergeMap } from 'rxjs/operators';
+
 import { calendarStore, CalendarState } from '@store/global_store';
 import { CalendarUnit } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
-import { fromEvent } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 type Props = {
   unit: CalendarUnit;
@@ -17,8 +18,20 @@ const CalendarSelectorContainer = ({ unit }: Props): ReactElement => {
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
     const onSelectorClicked = fromEvent(selectorButton.current as any, 'click')
-      .pipe(map((event: any) => event.srcElement.innerText))
-      .subscribe((selectedUnit: CalendarUnit) => CalendarVM.setCurrentUnit(selectedUnit));
+      .pipe(
+        map((event: any) => event.srcElement.innerText),
+        tap((selectedUnit: CalendarUnit) => CalendarVM.setCurrentUnit(selectedUnit)),
+        // mergeMap((selectedUnit: CalendarUnit) =>
+        //   iif(
+        //     () => selectedUnit === CalendarUnit.DAILY,
+        //     CalendarVM.setCurrentDatetoSelectedDate(),
+        //     CalendarVM.setCurrentDatetoSelectedDate(),
+        //   ),
+        // ),
+        filter((selectedUnit: CalendarUnit) => selectedUnit === CalendarUnit.DAILY),
+        tap(() => CalendarVM.setCurrentDatetoSelectedDate()),
+      )
+      .subscribe();
 
     return () => {
       calendarStoreSubs.unsubscribe();

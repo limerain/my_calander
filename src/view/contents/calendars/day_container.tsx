@@ -36,7 +36,7 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
       calendarStoreSubs.unsubscribe();
       onDayClicked.unsubscribe();
     };
-  }, []);
+  }, [calendarState.currentDate]);
 
   useEffect(() => {
     if (!calendarState.selectedDate) return;
