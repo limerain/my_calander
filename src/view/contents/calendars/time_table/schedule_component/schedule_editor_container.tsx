@@ -56,12 +56,10 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
       title="일정 편집"
       visible={isModalVisible}
       footer={[
-        isExist ? (
+        isExist && (
           <Button key="delete" onClick={handleOk}>
             삭제
           </Button>
-        ) : (
-          <></>
         ),
         <Button key="apply" type="primary" onClick={handleOk}>
           {applyText}
