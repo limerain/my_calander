@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import HeaderContainer from '@view/header';
-import CalendarContainer from '@view/contents';
+import HeaderContainer from '@view/header/header_container';
+import CalendarContainer from '@view/contents/calendar_container';
 
 import './App.less';
 

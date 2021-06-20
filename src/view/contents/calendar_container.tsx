@@ -4,7 +4,7 @@ import { calendarStore, CalendarState } from '@store/global_store';
 
 import YearContainer from './calendars/year_container';
 import MonthContainer from './calendars/month_container';
-import TimeTableContainer from './calendars/time_table';
+import TimeTableContainer from './calendars/time_table/time_table_container';
 
 const calendarContainers = new Map();
 calendarContainers.set(CalendarUnit.YEARLY, <YearContainer />);
