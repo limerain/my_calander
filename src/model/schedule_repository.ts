@@ -1,6 +1,5 @@
 import axios from 'axios';
 import ScheduleEntity, { ScheduleModel } from '@model/schedule_entity';
-import moment from 'moment';
 
 export default class ScheduleRepository {
   private entities_: Map<string, ScheduleEntity>;

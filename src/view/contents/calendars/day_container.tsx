@@ -1,9 +1,8 @@
 import React, { ReactElement, useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { Row, Col } from 'antd';
 import { fromEvent } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { Moment } from 'moment';
-import { CalendarUnit, SCHEDULE_MAP_KEY_FORMAT } from '@constant';
+import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
 import { calendarStore, CalendarState, scheduleStore, ScheduleState, ScheduleData } from '@store/global_store';
 

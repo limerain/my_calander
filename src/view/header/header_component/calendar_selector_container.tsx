@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useLayoutEffect, useRef } from 'react';
 import { Button } from 'antd';
-import { fromEvent, iif } from 'rxjs';
-import { map, tap, filter, mergeMap } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
+import { map, tap, filter } from 'rxjs/operators';
 
 import { calendarStore, CalendarState } from '@store/global_store';
 import { CalendarUnit } from '@constant';
