@@ -31,6 +31,7 @@ module.exports = {
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
     'prettier/prettier': [
       'error',
       {

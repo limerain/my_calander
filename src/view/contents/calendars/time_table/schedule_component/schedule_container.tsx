@@ -1,9 +1,7 @@
-import React, { ReactElement, useState, useRef, useLayoutEffect } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { Moment } from 'moment';
-import { Row, Modal, Input, Button, DatePicker, TimePicker } from 'antd';
+import { Row } from 'antd';
 import { nanoid } from 'nanoid';
-import { fromEvent } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import ScheduleEditorContainer from './schedule_editor_container';
 
 type Props = {

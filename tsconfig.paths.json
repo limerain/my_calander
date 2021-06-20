@@ -11,6 +11,9 @@
         "@vm/*":[
           "src/view_model/*"
         ],
+        "@model/*":[
+          "src/model/*"
+        ],
         "@constant": [
           "src/constants/constant.ts"
         ]

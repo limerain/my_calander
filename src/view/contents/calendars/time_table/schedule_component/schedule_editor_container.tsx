@@ -1,9 +1,9 @@
-import React, { ReactElement, useState, useRef, useLayoutEffect, MutableRefObject } from 'react';
+import React, { ReactElement, useState, useLayoutEffect, MutableRefObject } from 'react';
 import { Moment } from 'moment';
-import { Row, Modal, Input, Button, DatePicker, TimePicker, message } from 'antd';
-import { nanoid } from 'nanoid';
-import { fromEvent, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Modal, Input, Button, DatePicker, TimePicker, message } from 'antd';
+import { fromEvent } from 'rxjs';
+
+import ScheduleVM from '@vm/schedule_vm';
 
 type Props = {
   scheduleCell: MutableRefObject<any>;
@@ -11,16 +11,18 @@ type Props = {
   //   presentTime: Moment;
 };
 
-type ScheduleState = {
+export type ScheduleState = {
   content: string | null;
   startTime: Moment | null;
   endTime: Moment | null;
-  startDate: Moment | null;
-  endDate: Moment | null;
+  startDate: Moment | null; // VM에는 최종적으로 Date + Time이 합쳐진 데이터 하나만 저장함. 여기서는 데이터 검증을 위해 분리함
+  endDate: Moment | null; // VM에는 최종적으로 Date + Time이 합쳐진 데이터 하나만 저장함. 여기서는 데이터 검증을 위해 분리함
 };
 
 const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactElement => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
   const [localScheduleState, setScheduleState] = useState<ScheduleState>({
     content: null,
     startTime: null,
@@ -28,8 +30,6 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
     startDate: null,
     endDate: null,
   });
-  const endDateRef = useRef(null);
-  // console.log('selected time: ', selectedTime);
 
   // schedule 있으면 다르게 떠야함
   const modalPlaceholder = `일정을 입력해주세요.`;
@@ -39,6 +39,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
   useLayoutEffect(() => {
     const onScheduleClicked = fromEvent(scheduleCell.current as any, 'click').subscribe(() => setIsModalVisible(true));
     // .pipe(tap(() => console.log('presentTime: ', presentTime.format('YYYY-MM-DD-HH'))))
+    // console.log('selected time: ', selectedTime.format('YYYY-MM-DD_hh:mm:ss'));
 
     return () => {
       onScheduleClicked.unsubscribe();
@@ -55,7 +56,17 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
     ) {
       message.error('입력사항이 올바르지 않습니다.');
     } else {
-      setIsModalVisible(false);
+      setConfirmLoading(true);
+      ScheduleVM.setSchedule(selectedTime.format('YYYY-MM-DD_hh'), localScheduleState)
+        .then(() => {
+          setIsModalVisible(false);
+          setConfirmLoading(false);
+        })
+        .catch((error: Error) => {
+          message.error(error.message);
+          setIsModalVisible(false);
+          setConfirmLoading(false);
+        });
     }
   };
   const handleCancel = () => {
@@ -69,7 +80,6 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
     });
   };
   const onStartDateChanged = (startDate: Moment | null) => {
-    // console.log('start date changed ', event?.format('X')); // to unix time
     setScheduleState({
       ...localScheduleState,
       startDate,
@@ -101,11 +111,11 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
       closable={false}
       footer={[
         isExist && (
-          <Button key="delete" onClick={handleOk}>
+          <Button key="delete" onClick={handleOk} loading={confirmLoading}>
             삭제
           </Button>
         ),
-        <Button key="apply" type="primary" onClick={handleOk}>
+        <Button key="apply" type="primary" onClick={handleOk} loading={confirmLoading}>
           {applyText}
         </Button>,
         <Button key="cancel" onClick={handleCancel}>
@@ -154,7 +164,6 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             종료 날짜
             <DatePicker
-              ref={endDateRef}
               onChange={onEndDateChanged}
               disabledDate={(date: Moment | null) => {
                 if (localScheduleState.startDate && date && date.isBefore(localScheduleState.startDate, 'd'))
