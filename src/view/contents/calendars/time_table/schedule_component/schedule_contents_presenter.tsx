@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 
 type Props = {
-  contents: string;
+  contents: string | undefined;
 };
 
 const ScheduleContentsPresenter = ({ contents }: Props): ReactElement => {

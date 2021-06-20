@@ -1,9 +1,13 @@
 import React, { ReactElement, useRef, useLayoutEffect, useEffect, useState } from 'react';
-import { Col } from 'antd';
+import { Row, Col } from 'antd';
 import { fromEvent } from 'rxjs';
 import { Moment } from 'moment';
+import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
-import { calendarStore, CalendarState } from '@store/global_store';
+import { calendarStore, CalendarState, scheduleStore, ScheduleState, ScheduleData } from '@store/global_store';
+
+import ScheduleTimePresenter from './time_table/schedule_component/schedule_time_presenter';
+import ScheduleContentsPresenter from './time_table/schedule_component/schedule_contents_presenter';
 
 type Props = {
   presentDay: Moment;
@@ -24,16 +28,19 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
     color: 'black',
   });
   const [todayColor, setTodayState] = useState<string>('white');
+  const [scheduleState, setScheduleState] = useState<ScheduleState>(scheduleStore.initialState);
   const dayCell = useRef(null);
 
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
+    const scheduleStoreSubs = scheduleStore.init(setScheduleState);
     const onDayClicked = fromEvent(dayCell.current as any, 'click').subscribe(() =>
       CalendarVM.setSelectedDate(presentDay),
     );
 
     return () => {
       calendarStoreSubs.unsubscribe();
+      scheduleStoreSubs.unsubscribe();
       onDayClicked.unsubscribe();
     };
   }, [calendarState.currentDate]);
@@ -53,13 +60,26 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
     }
   }, [calendarState.selectedDate]);
 
+  let firstSchedule: ScheduleData | undefined;
+  Array(24)
+    .fill(0)
+    .find((_: number, index: number) => {
+      const key = presentDay.clone().startOf('d').add(index, 'h').format(SCHEDULE_MAP_KEY_FORMAT);
+      const value = scheduleState.scheduleMap.get(key);
+      if (value) {
+        firstSchedule = value;
+        return true;
+      }
+      return false;
+    });
+  const justify = 'center';
+
   return (
     <Col
       ref={dayCell}
       span={3}
       style={{
         border: '1px solid black',
-        textAlign: 'center',
         fontSize: '1.3rem',
         color,
         borderWidth: selectedBorder.width,
@@ -67,7 +87,14 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
         backgroundColor: todayColor, // 미구현
       }}
     >
-      {presentDay.format('D')}
+      <Row justify={justify}>{presentDay.format('D')}</Row>
+      <Row justify={justify} style={{ color: 'black' }}>
+        <ScheduleTimePresenter time={firstSchedule ? firstSchedule.startTime.format('hh:mm:ss') : ''} />{' '}
+      </Row>
+      <Row justify={justify} style={{ color: 'black' }}>
+        {' '}
+        <ScheduleContentsPresenter contents={firstSchedule?.content} />
+      </Row>
     </Col>
   );
 };

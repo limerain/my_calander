@@ -27,12 +27,11 @@ const ScheduleContainer = ({ presentTime }: Props): ReactElement => {
   const key = presentTime.format(SCHEDULE_MAP_KEY_FORMAT);
   const value = scheduleState.scheduleMap.get(key);
 
-  const time = value ? value.startTime.format('YYYY-MM-DD hh:mm:ss') : '';
-  const contents = value ? value.content : '';
   return (
     <>
       <Row key={nanoid()} style={{ width: '100%', border: '1px solid black', height: '2.95rem' }} ref={scheduleCell}>
-        <ScheduleTimePresenter time={time} /> <ScheduleContentsPresenter contents={contents} />
+        <ScheduleTimePresenter time={value ? value.startTime.format('YYYY-MM-DD hh:mm:ss') : ''} />{' '}
+        <ScheduleContentsPresenter contents={value?.content} />
       </Row>
       <ScheduleEditorContainer selectedTime={presentTime} scheduleCell={scheduleCell} value={value} />
     </>
