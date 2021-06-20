@@ -7,3 +7,5 @@ export enum CalendarUnit {
   MONTHLY = '월',
   DAILY = '일',
 }
+
+export const SCHEDULE_MAP_KEY_FORMAT = 'YYYY-MM-DD_HH';

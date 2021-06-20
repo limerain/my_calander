@@ -4,10 +4,13 @@ import { Modal, Input, Button, DatePicker, TimePicker, message } from 'antd';
 import { fromEvent } from 'rxjs';
 
 import ScheduleVM from '@vm/schedule_vm';
+import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
+import { ScheduleData } from '@store/global_store';
 
 type Props = {
   scheduleCell: MutableRefObject<any>;
   selectedTime: Moment;
+  value: ScheduleData | undefined;
   //   presentTime: Moment;
 };
 
@@ -19,16 +22,16 @@ export type ScheduleState = {
   endDate: Moment | null; // VM에는 최종적으로 Date + Time이 합쳐진 데이터 하나만 저장함. 여기서는 데이터 검증을 위해 분리함
 };
 
-const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactElement => {
+const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): ReactElement => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   const [localScheduleState, setScheduleState] = useState<ScheduleState>({
-    content: null,
-    startTime: null,
-    endTime: null,
-    startDate: null,
-    endDate: null,
+    content: value ? value.content : null,
+    startTime: value ? value.startTime.clone() : selectedTime,
+    endTime: value ? value.endTime.clone() : null,
+    startDate: value ? value.startTime.clone().startOf('d') : selectedTime,
+    endDate: value ? value.endTime.clone().startOf('d') : null,
   });
 
   // schedule 있으면 다르게 떠야함
@@ -38,13 +41,11 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
 
   useLayoutEffect(() => {
     const onScheduleClicked = fromEvent(scheduleCell.current as any, 'click').subscribe(() => setIsModalVisible(true));
-    // .pipe(tap(() => console.log('presentTime: ', presentTime.format('YYYY-MM-DD-HH'))))
-    // console.log('selected time: ', selectedTime.format('YYYY-MM-DD_hh:mm:ss'));
 
     return () => {
       onScheduleClicked.unsubscribe();
     };
-  }, []);
+  }, [scheduleCell.current]);
 
   const handleOk = () => {
     if (
@@ -57,7 +58,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
       message.error('입력사항이 올바르지 않습니다.');
     } else {
       setConfirmLoading(true);
-      ScheduleVM.setSchedule(selectedTime.format('YYYY-MM-DD_hh'), localScheduleState)
+      ScheduleVM.setSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT), localScheduleState)
         .then(() => {
           setIsModalVisible(false);
           setConfirmLoading(false);
@@ -130,6 +131,8 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             시작 날짜
             <DatePicker
+              defaultValue={selectedTime}
+              disabled
               onChange={onStartDateChanged}
               disabledDate={(date: Moment | null) => {
                 if (localScheduleState.endDate && date && date.isAfter(localScheduleState.endDate, 'd')) return true;
@@ -140,6 +143,8 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime }: Props): ReactEl
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             시작 시간
             <TimePicker
+              defaultValue={selectedTime}
+              disabled
               onChange={onStartTimeChanged}
               disabledDate={(date: Moment | null) => {
                 if (localScheduleState.startDate && date && localScheduleState.endDate && localScheduleState.endTime) {
