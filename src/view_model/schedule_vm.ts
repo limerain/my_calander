@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { scheduleStore, ScheduleState, ScheduleData } from '@store/global_store';
+import { scheduleStore, ScheduleData } from '@store/global_store';
 import { ScheduleState as ViewData } from '@view/contents/calendars/time_table/schedule_component/schedule_editor_container';
 import ScheduleService from '@model/schedule_service';
 
@@ -8,7 +8,54 @@ class ScheduleViewModel {
     // with monthly data
   }
 
-  public async setSchedule(key: string, contents: ViewData) {
+  public async setSchedule(key: string, contents: ViewData): Promise<void> {
+    try {
+      const scheduleData: ScheduleData = this.mapViewDataToVmData(contents);
+      // model job
+      await ScheduleService.createSchedule(key, scheduleData);
+
+      // state job
+      const map = scheduleStore.getData().scheduleMap;
+      map.set(key, scheduleData);
+      scheduleStore.setSchedule(map);
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async updateSchedule(key: string, contents: ViewData): Promise<void> {
+    try {
+      // model job
+      const scheduleData: ScheduleData = this.mapViewDataToVmData(contents);
+      await ScheduleService.updateSchedule(key, scheduleData);
+      // state job
+      const map = scheduleStore.getData().scheduleMap;
+      map.set(key, scheduleData);
+      scheduleStore.setSchedule(map);
+
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async deleteSchedule(key: string): Promise<void> {
+    try {
+      // model job
+      await ScheduleService.deleteSchedule(key);
+      // state job
+      const map = scheduleStore.getData().scheduleMap;
+      map.delete(key);
+      scheduleStore.setSchedule(map);
+
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  private mapViewDataToVmData(contents: ViewData): ScheduleData {
     if (!contents.content || !contents.endDate || !contents.endTime || !contents.startDate || !contents.startTime) {
       throw new Error('schedule data error');
     }
@@ -24,30 +71,11 @@ class ScheduleViewModel {
       seconds: contents.endTime.seconds(),
     });
 
-    const scheduleData: ScheduleData = {
+    return {
       content: contents.content,
       startTime,
       endTime,
     };
-
-    // model job
-    try {
-      await ScheduleService.saveSchedule(key, scheduleData);
-      const map = scheduleStore.getData().scheduleMap;
-      map.set(key, scheduleData);
-      scheduleStore.addSchedule(map);
-      return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }
-
-  public updateSchedule() {
-    //
-  }
-
-  public deleteSchedule() {
-    //
   }
 }
 

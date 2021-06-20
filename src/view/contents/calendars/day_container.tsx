@@ -1,8 +1,9 @@
 import React, { ReactElement, useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { Row, Col } from 'antd';
 import { fromEvent } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Moment } from 'moment';
-import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
+import { CalendarUnit, SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
 import { calendarStore, CalendarState, scheduleStore, ScheduleState, ScheduleData } from '@store/global_store';
 
@@ -34,13 +35,28 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
   useLayoutEffect(() => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
     const scheduleStoreSubs = scheduleStore.init(setScheduleState);
+
+    // const onDayDoubleClicked = fromEvent(dayCell.current as any, 'dblclick')
+    //   .pipe(
+    //     tap(() => CalendarVM.setCurrentUnit(CalendarUnit.DAILY)),
+    //     tap(() => CalendarVM.setSelectedDate(presentDay)),
+    //   )
+    //   .subscribe(() => {
+    //     CalendarVM.setCurrentDatetoSelectedDate();
+    //   });
+    return () => {
+      scheduleStoreSubs.unsubscribe();
+      calendarStoreSubs.unsubscribe();
+      // onDayDoubleClicked.unsubscribe();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
     const onDayClicked = fromEvent(dayCell.current as any, 'click').subscribe(() =>
       CalendarVM.setSelectedDate(presentDay),
     );
 
     return () => {
-      calendarStoreSubs.unsubscribe();
-      scheduleStoreSubs.unsubscribe();
       onDayClicked.unsubscribe();
     };
   }, [calendarState.currentDate]);

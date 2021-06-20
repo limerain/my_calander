@@ -5,13 +5,15 @@ export type ScheduleModel = {
 };
 
 export default class ScheduleEntity {
-  public content_: string;
-  public startTime_: number;
-  public endTime_: number;
+  public content: string;
+  public startTime: number;
+  public endTime: number;
+  public scheduleId: number;
 
-  constructor({ content, startTime, endTime }: ScheduleModel) {
-    this.content_ = content;
-    this.startTime_ = startTime;
-    this.endTime_ = endTime;
+  constructor(scheduleId: number, { content, startTime, endTime }: ScheduleModel) {
+    this.scheduleId = scheduleId;
+    this.content = content;
+    this.startTime = startTime;
+    this.endTime = endTime;
   }
 }

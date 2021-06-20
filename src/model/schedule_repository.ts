@@ -19,12 +19,73 @@ export default class ScheduleRepository {
       return Promise.reject(new Error('schedule data already exist. please try to update function'));
 
     try {
-      // await axios.post(this.scheduleApiUrl_, JSON.stringify(data), {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
-      this.entities_.set(key, new ScheduleEntity(data));
+      let response;
+      if (this.scheduleApiUrl_ === 'https://my_schedule_server.co.kr/api/schedule') {
+        // mocking code
+        response = {
+          data: {
+            scheduleId: Math.random(),
+          },
+        };
+      } else {
+        response = await axios.post(this.scheduleApiUrl_, JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      this.entities_.set(key, new ScheduleEntity(response.data.scheduleId, data));
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async updateScheduleData(key: string, data: ScheduleModel): Promise<void> {
+    try {
+      let response;
+      if (this.scheduleApiUrl_ === 'https://my_schedule_server.co.kr/api/schedule') {
+        // mocking code
+        response = {
+          data: {
+            scheduleId: Math.random(),
+          },
+        };
+      } else {
+        response = await axios.put(this.scheduleApiUrl_, JSON.stringify(data), {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      this.entities_.set(key, new ScheduleEntity(response.data.scheduleId, data));
+      return Promise.resolve();
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  public async deleteScheduleData(key: string): Promise<void> {
+    try {
+      const entity = this.entities_.get(key);
+      if (!entity) {
+        throw new Error('There is no schedule data yet.');
+      }
+
+      let response;
+      if (this.scheduleApiUrl_ === 'https://my_schedule_server.co.kr/api/schedule') {
+        // mocking code
+        response = {
+          data: 'success',
+        };
+      } else {
+        response = await axios.delete(`${this.scheduleApiUrl_}/${entity.scheduleId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+      this.entities_.delete(key);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);

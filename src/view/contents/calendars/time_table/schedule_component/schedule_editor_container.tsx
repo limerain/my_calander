@@ -33,10 +33,10 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
     startDate: value ? value.startTime.clone().startOf('d') : selectedTime,
     endDate: value ? value.endTime.clone().startOf('d') : null,
   });
+  const modalPlaceholder = `일정을 입력해주세요.`;
 
   // schedule 있으면 다르게 떠야함
-  const modalPlaceholder = `일정을 입력해주세요.`;
-  const isExist = false;
+  const isExist = value !== undefined;
   const applyText = isExist ? '편집' : '확인';
 
   useLayoutEffect(() => {
@@ -46,6 +46,28 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
       onScheduleClicked.unsubscribe();
     };
   }, [scheduleCell.current]);
+
+  const handleSuccess = () => {
+    setIsModalVisible(false);
+    setConfirmLoading(false);
+  };
+  const handleError = (error: Error) => {
+    message.error(error.message);
+    setIsModalVisible(false);
+    setConfirmLoading(false);
+  };
+
+  const setSchedule = () => {
+    ScheduleVM.setSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT), localScheduleState)
+      .then(handleSuccess)
+      .catch(handleError);
+  };
+
+  const editSchedule = () => {
+    ScheduleVM.updateSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT), localScheduleState)
+      .then(handleSuccess)
+      .catch(handleError);
+  };
 
   const handleOk = () => {
     if (
@@ -58,18 +80,15 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
       message.error('입력사항이 올바르지 않습니다.');
     } else {
       setConfirmLoading(true);
-      ScheduleVM.setSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT), localScheduleState)
-        .then(() => {
-          setIsModalVisible(false);
-          setConfirmLoading(false);
-        })
-        .catch((error: Error) => {
-          message.error(error.message);
-          setIsModalVisible(false);
-          setConfirmLoading(false);
-        });
+      if (!isExist) setSchedule();
+      else editSchedule();
     }
   };
+  const handleDelete = () => {
+    setConfirmLoading(true);
+    ScheduleVM.deleteSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT)).then(handleSuccess).catch(handleError);
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -112,7 +131,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
       closable={false}
       footer={[
         isExist && (
-          <Button key="delete" onClick={handleOk} loading={confirmLoading}>
+          <Button key="delete" onClick={handleDelete} loading={confirmLoading}>
             삭제
           </Button>
         ),
@@ -125,7 +144,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
       ]}
     >
       일정
-      <Input placeholder={modalPlaceholder} onChange={onContentChanged} />
+      <Input defaultValue={value && value.content} placeholder={modalPlaceholder} onChange={onContentChanged} />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -169,6 +188,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             종료 날짜
             <DatePicker
+              defaultValue={value && value.endTime}
               onChange={onEndDateChanged}
               disabledDate={(date: Moment | null) => {
                 if (localScheduleState.startDate && date && date.isBefore(localScheduleState.startDate, 'd'))
@@ -180,6 +200,7 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             종료 시간
             <TimePicker
+              defaultValue={value && value.endTime}
               onChange={onEndTimeChanged}
               disabledDate={(date: Moment | null) => {
                 if (

@@ -10,9 +10,19 @@ class ScheduleService {
     this.repository_ = new ScheduleRepository(HOSTURL);
   }
 
-  public saveSchedule(key: string, scheduleData: ScheduleData): Promise<void> {
+  public createSchedule(key: string, scheduleData: ScheduleData): Promise<void> {
     const scheduleModel = this.convertToModelData(scheduleData);
     return this.repository_.setScheduleData(key, scheduleModel);
+  }
+
+  public updateSchedule(key: string, scheduleData: ScheduleData): Promise<void> {
+    // this function similar to createSchedule Func. However, it clearly separates the meaning.
+    const scheduleModel = this.convertToModelData(scheduleData);
+    return this.repository_.updateScheduleData(key, scheduleModel);
+  }
+
+  public deleteSchedule(key: string): Promise<void> {
+    return this.repository_.deleteScheduleData(key);
   }
 
   private convertToModelData(scheduleData: ScheduleData): ScheduleModel {

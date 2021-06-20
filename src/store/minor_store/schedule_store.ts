@@ -21,7 +21,7 @@ class ScheduleStore extends StoreTemplate {
     });
   }
 
-  public addSchedule(scheduleMap: Map<string, ScheduleData>): void {
+  public setSchedule(scheduleMap: Map<string, ScheduleData>): void {
     this.nextState({
       ...this.state_,
       scheduleMap,
