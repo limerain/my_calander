@@ -1,5 +1,6 @@
 import axios from 'axios';
 import ScheduleEntity, { ScheduleModel } from '@model/schedule_entity';
+import moment from 'moment';
 
 export default class ScheduleRepository {
   private entities_: Map<string, ScheduleEntity>;
@@ -10,8 +11,13 @@ export default class ScheduleRepository {
     this.scheduleApiUrl_ = `${serverUrl}/api/schedule`;
   }
 
-  public getMonthlySchedule(month: string) {
-    //
+  public getMonthlySchedule(month: string): Promise<void> {
+    // month: YYYY-MM, key: YYYY-MM-DD_HH
+    // if (this.entities_.has(key))
+    //   return Promise.reject(new Error('schedule data already exist. please try to update function'));
+    // const monthlyData = moment(month);
+    // console.log(monthlyData);
+    return Promise.resolve();
   }
 
   public async setScheduleData(key: string, data: ScheduleModel): Promise<void> {

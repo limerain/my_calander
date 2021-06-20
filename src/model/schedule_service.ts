@@ -10,6 +10,10 @@ class ScheduleService {
     this.repository_ = new ScheduleRepository(HOSTURL);
   }
 
+  public getMonthlySchedule(month: string): Promise<void> {
+    return this.repository_.getMonthlySchedule(month);
+  }
+
   public createSchedule(key: string, scheduleData: ScheduleData): Promise<void> {
     const scheduleModel = this.convertToModelData(scheduleData);
     return this.repository_.setScheduleData(key, scheduleModel);

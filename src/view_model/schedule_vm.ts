@@ -1,11 +1,12 @@
-import { of } from 'rxjs';
 import { scheduleStore, ScheduleData } from '@store/global_store';
 import { ScheduleState as ViewData } from '@view/contents/calendars/time_table/schedule_component/schedule_editor_container';
 import ScheduleService from '@model/schedule_service';
 
 class ScheduleViewModel {
-  public getSchedule() {
+  public cacheNextMonthSchedule(month: string): Promise<void> {
     // with monthly data
+    // just get to VM store
+    return ScheduleService.getMonthlySchedule(month);
   }
 
   public async setSchedule(key: string, contents: ViewData): Promise<void> {

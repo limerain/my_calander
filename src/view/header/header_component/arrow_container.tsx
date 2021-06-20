@@ -4,6 +4,8 @@ import { fromEvent, iif } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import CalendarVM from '@vm/calendar_vm';
+import ScheduleVM from '@vm/schedule_vm';
+import { Moment } from 'moment';
 
 type Props = {
   direction: Direction;
@@ -21,7 +23,8 @@ const ArrowContainer = ({ direction }: Props): ReactElement => {
   useLayoutEffect(() => {
     const onArrowClicked = fromEvent(arrowButton.current as any, 'click')
       .pipe(
-        mergeMap(() => iif(() => direction === Direction.LEFT, CalendarVM.movePrevMonth(), CalendarVM.moveNextMonth())),
+        mergeMap(() => iif(() => direction === Direction.LEFT, CalendarVM.movePrev(), CalendarVM.moveNext())),
+        mergeMap((newerMonth: Moment) => ScheduleVM.cacheNextMonthSchedule(newerMonth.format('YYYY-MM'))),
       )
       .subscribe();
     return () => {
