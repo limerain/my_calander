@@ -7,8 +7,13 @@ import ScheduleVM from '@vm/schedule_vm';
 import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import { ScheduleData } from '@store/global_store';
 
+type ScheduleEvent = {
+  elementRef: MutableRefObject<any>;
+  event: string;
+};
+
 type Props = {
-  scheduleCell: MutableRefObject<any>;
+  scheduleEvent: ScheduleEvent;
   selectedTime: Moment;
   value: ScheduleData | undefined;
   //   presentTime: Moment;
@@ -23,7 +28,7 @@ export type ScheduleState = {
   endDate: Moment | null; // VM에는 최종적으로 Date + Time이 합쳐진 데이터 하나만 저장함. 여기서는 데이터 검증을 위해 분리함
 };
 
-const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): ReactElement => {
+const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props): ReactElement => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -41,12 +46,14 @@ const ScheduleEditorContainer = ({ scheduleCell, selectedTime, value }: Props): 
   const applyText = localScheduleState.isExist ? '편집' : '확인';
 
   useLayoutEffect(() => {
-    const onScheduleClicked = fromEvent(scheduleCell.current as any, 'click').subscribe(() => setIsModalVisible(true));
+    const onScheduleClicked = fromEvent(scheduleEvent.elementRef.current as any, scheduleEvent.event).subscribe(() =>
+      setIsModalVisible(true),
+    );
 
     return () => {
       onScheduleClicked.unsubscribe();
     };
-  }, [scheduleCell.current]);
+  }, [scheduleEvent.elementRef.current]);
 
   const handleSuccess = () => {
     setScheduleState({

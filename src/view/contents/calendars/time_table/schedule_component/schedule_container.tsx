@@ -29,11 +29,15 @@ const ScheduleContainer = ({ presentTime }: Props): ReactElement => {
 
   return (
     <>
-      <Row key={nanoid()} style={{ width: '100%', border: '1px solid black', height: '2.95rem' }} ref={scheduleCell}>
+      <Row style={{ width: '100%', border: '1px solid black', height: '2.95rem' }} ref={scheduleCell}>
         <ScheduleTimePresenter time={value ? value.endTime.format('~ YYYY-MM-DD HH:mm') : ''} />{' '}
         <ScheduleContentsPresenter contents={value?.content} />
       </Row>
-      <ScheduleEditorContainer selectedTime={presentTime} scheduleCell={scheduleCell} value={value} />
+      <ScheduleEditorContainer
+        selectedTime={presentTime}
+        scheduleEvent={{ elementRef: scheduleCell, event: 'click' }}
+        value={value}
+      />
     </>
   );
 };

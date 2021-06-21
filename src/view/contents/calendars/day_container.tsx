@@ -109,7 +109,11 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
           <ScheduleContentsPresenter contents={firstSchedule?.content} />
         </Row>
       </Col>
-      <ScheduleEditorContainer scheduleCell={dayCell} selectedTime={presentDay} value={firstSchedule} />
+      <ScheduleEditorContainer
+        scheduleEvent={{ elementRef: dayCell, event: 'dblclick' }}
+        selectedTime={presentDay}
+        value={firstSchedule}
+      />
     </>
   );
 };
