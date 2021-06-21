@@ -48,12 +48,12 @@ const TimeTableContainer = (): ReactElement => {
 
   return (
     <Row>
-      <Col style={{ width: '15%' }}>
+      <Col style={{ width: '9rem' }}>
         {timeTable.map(function mappingTimeTable(v: string) {
           return <TimeHeaderPresenter key={nanoid()} time={v} />;
         })}
       </Col>
-      <Col style={{ width: '85%' }}>
+      <Col style={{ width: '80%' }}>
         {timeTable.map(function fillTimeTable(_: string, k: number) {
           return <ScheduleContainer key={nanoid()} presentTime={today.clone().add(k, 'h')} />;
         })}
