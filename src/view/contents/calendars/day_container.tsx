@@ -35,18 +35,9 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
     const calendarStoreSubs = calendarStore.init(setCalendarState);
     const scheduleStoreSubs = scheduleStore.init(setScheduleState);
 
-    // const onDayDoubleClicked = fromEvent(dayCell.current as any, 'dblclick')
-    //   .pipe(
-    //     tap(() => CalendarVM.setCurrentUnit(CalendarUnit.DAILY)),
-    //     tap(() => CalendarVM.setSelectedDate(presentDay)),
-    //   )
-    //   .subscribe(() => {
-    //     CalendarVM.setCurrentDatetoSelectedDate();
-    //   });
     return () => {
       scheduleStoreSubs.unsubscribe();
       calendarStoreSubs.unsubscribe();
-      // onDayDoubleClicked.unsubscribe();
     };
   }, []);
 

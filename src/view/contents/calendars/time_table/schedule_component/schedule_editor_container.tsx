@@ -37,8 +37,6 @@ const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props):
     endDate: value ? value.endTime.clone().startOf('d') : null,
   });
   const modalPlaceholder = `일정을 입력해주세요.`;
-
-  // schedule 있으면 다르게 떠야함
   const applyText = localScheduleState.isExist ? '편집' : '확인';
 
   useLayoutEffect(() => {
@@ -99,8 +97,12 @@ const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props):
     }
   };
   const handleDelete = () => {
+    if (!localScheduleState.startTime) {
+      message.error('삭제 정보가 올바르지 않습니다.');
+      return;
+    }
     setConfirmLoading(true);
-    ScheduleVM.deleteSchedule(selectedTime.format(SCHEDULE_MAP_KEY_FORMAT))
+    ScheduleVM.deleteSchedule(localScheduleState.startTime.format(SCHEDULE_MAP_KEY_FORMAT))
       .then(handleDeleteSuccess)
       .catch(handleError);
   };
