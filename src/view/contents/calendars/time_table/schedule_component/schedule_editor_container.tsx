@@ -1,19 +1,14 @@
-import React, { ReactElement, useState, useLayoutEffect, MutableRefObject } from 'react';
+import React, { ReactElement, useState, useLayoutEffect } from 'react';
 import { Moment } from 'moment';
 import { Modal, Input, Button, DatePicker, TimePicker, message } from 'antd';
-import { fromEvent } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import ScheduleVM from '@vm/schedule_vm';
 import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import { ScheduleData } from '@store/global_store';
 
-type ScheduleEvent = {
-  elementRef: MutableRefObject<any>;
-  event: string;
-};
-
 type Props = {
-  scheduleEvent: ScheduleEvent;
+  scheduleEvent: Observable<any> | undefined;
   selectedTime: Moment;
   value: ScheduleData | undefined;
   //   presentTime: Moment;
@@ -47,14 +42,12 @@ const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props):
   const applyText = localScheduleState.isExist ? '편집' : '확인';
 
   useLayoutEffect(() => {
-    const onScheduleClicked = fromEvent(scheduleEvent.elementRef.current as any, scheduleEvent.event).subscribe(() =>
-      setIsModalVisible(true),
-    );
+    const onScheduleClicked = scheduleEvent?.subscribe(() => setIsModalVisible(true));
 
     return () => {
-      onScheduleClicked.unsubscribe();
+      onScheduleClicked?.unsubscribe();
     };
-  }, [scheduleEvent.elementRef.current]);
+  }, [scheduleEvent]);
 
   const handleSuccess = () => {
     setScheduleState({

@@ -1,7 +1,7 @@
 import React, { ReactElement, useRef, useState, useLayoutEffect } from 'react';
 import { Moment } from 'moment';
 import { Row } from 'antd';
-import { nanoid } from 'nanoid';
+import { fromEvent, Observable } from 'rxjs';
 import { scheduleStore, ScheduleState } from '@store/global_store';
 import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 
@@ -24,6 +24,10 @@ const ScheduleContainer = ({ presentTime }: Props): ReactElement => {
       scheduleStoreSubs.unsubscribe();
     };
   }, []);
+
+  let scheduleClickListener: Observable<any> | undefined;
+  if (scheduleCell.current) scheduleClickListener = fromEvent(scheduleCell.current as any, 'click');
+
   const key = presentTime.format(SCHEDULE_MAP_KEY_FORMAT);
   const value = scheduleState.scheduleMap.get(key);
 
@@ -33,11 +37,7 @@ const ScheduleContainer = ({ presentTime }: Props): ReactElement => {
         <ScheduleTimePresenter time={value ? value.endTime.format('~ YYYY-MM-DD HH:mm') : ''} />{' '}
         <ScheduleContentsPresenter contents={value?.content} />
       </Row>
-      <ScheduleEditorContainer
-        selectedTime={presentTime}
-        scheduleEvent={{ elementRef: scheduleCell, event: 'click' }}
-        value={value}
-      />
+      <ScheduleEditorContainer selectedTime={presentTime} scheduleEvent={scheduleClickListener} value={value} />
     </>
   );
 };

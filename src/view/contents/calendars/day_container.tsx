@@ -1,6 +1,6 @@
 import React, { ReactElement, useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { Row, Col } from 'antd';
-import { fromEvent } from 'rxjs';
+import { fromEvent, Observable } from 'rxjs';
 import { Moment } from 'moment';
 import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
@@ -75,6 +75,9 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
     }
   }, [calendarState.selectedDate]);
 
+  let dayClickListener: Observable<any> | undefined;
+  if (dayCell.current) dayClickListener = fromEvent(dayCell.current as any, 'dblclick');
+
   let firstSchedule: ScheduleData | undefined;
   Array(24)
     .fill(0)
@@ -109,11 +112,7 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
           <ScheduleContentsPresenter contents={firstSchedule?.content} />
         </Row>
       </Col>
-      <ScheduleEditorContainer
-        scheduleEvent={{ elementRef: dayCell, event: 'dblclick' }}
-        selectedTime={presentDay}
-        value={firstSchedule}
-      />
+      <ScheduleEditorContainer scheduleEvent={dayClickListener} selectedTime={presentDay} value={firstSchedule} />
     </>
   );
 };
