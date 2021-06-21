@@ -6,7 +6,7 @@ import { SCHEDULE_MAP_KEY_FORMAT } from '@constant';
 import CalendarVM from '@vm/calendar_vm';
 import { calendarStore, CalendarState, scheduleStore, ScheduleState, ScheduleData } from '@store/global_store';
 
-import ScheduleTimePresenter from './time_table/schedule_component/schedule_time_presenter';
+import ScheduleEditorContainer from './time_table/schedule_component/schedule_editor_container';
 import ScheduleContentsPresenter from './time_table/schedule_component/schedule_contents_presenter';
 
 type Props = {
@@ -90,27 +90,27 @@ const DayContainer = ({ presentDay, color }: Props): ReactElement => {
   const justify = 'center';
 
   return (
-    <Col
-      ref={dayCell}
-      span={3}
-      style={{
-        border: '1px solid black',
-        fontSize: '1.3rem',
-        color,
-        borderWidth: selectedBorder.width,
-        borderColor: selectedBorder.color,
-        backgroundColor: todayColor, // 미구현
-      }}
-    >
-      <Row justify={justify}>{presentDay.format('D')}</Row>
-      <Row justify={justify} style={{ color: 'black' }}>
-        <ScheduleTimePresenter time={firstSchedule ? firstSchedule.startTime.format('hh:mm:ss') : ''} />{' '}
-      </Row>
-      <Row justify={justify} style={{ color: 'black' }}>
-        {' '}
-        <ScheduleContentsPresenter contents={firstSchedule?.content} />
-      </Row>
-    </Col>
+    <>
+      <Col
+        ref={dayCell}
+        span={3}
+        style={{
+          border: '1px solid black',
+          fontSize: '1.3rem',
+          color,
+          borderWidth: selectedBorder.width,
+          borderColor: selectedBorder.color,
+          backgroundColor: todayColor, // 미구현
+        }}
+      >
+        <Row justify={justify}>{presentDay.format('D')}</Row>
+        <Row justify={justify} style={{ color: 'black' }}>
+          {' '}
+          <ScheduleContentsPresenter contents={firstSchedule?.content} />
+        </Row>
+      </Col>
+      <ScheduleEditorContainer scheduleCell={dayCell} selectedTime={presentDay} value={undefined} />
+    </>
   );
 };
 
