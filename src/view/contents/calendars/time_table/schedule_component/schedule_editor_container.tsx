@@ -29,6 +29,7 @@ export type ScheduleState = {
 };
 
 const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props): ReactElement => {
+  const TIME_PICKER_FORMAT = 'HH:mm';
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -190,6 +191,7 @@ const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props):
             <TimePicker
               defaultValue={localScheduleState.startTime ? localScheduleState.startTime : undefined}
               disabled
+              format={TIME_PICKER_FORMAT}
               onChange={onStartTimeChanged}
               disabledDate={(date: Moment | null) => {
                 if (localScheduleState.startDate && date && localScheduleState.endDate && localScheduleState.endTime) {
@@ -227,6 +229,7 @@ const ScheduleEditorContainer = ({ scheduleEvent, selectedTime, value }: Props):
             종료 시간
             <TimePicker
               defaultValue={localScheduleState.endTime ? localScheduleState.endTime : undefined}
+              format={TIME_PICKER_FORMAT}
               onChange={onEndTimeChanged}
               disabledDate={(date: Moment | null) => {
                 if (
